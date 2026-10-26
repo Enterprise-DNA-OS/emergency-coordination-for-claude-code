@@ -10,7 +10,7 @@
       },
       {
         "title": "Needs attention",
-        "sql": "select * from attention order by due nulls first,code"
+        "sql": "select code,owner,due,reason from attention order by due nulls first,code"
       }
     ]
   },

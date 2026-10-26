@@ -58,8 +58,9 @@ function parse(argv){
 }
 async function resolve(db,entity,ref,{lock=false}={}){
  if(!entities.includes(entity))throw Error(`Entity must be ${entities.join(', ')}`);
+ const q=String(ref??'').trim().toLowerCase();if(!q)throw Error('Record reference must not be blank');
  const rows=await db.query(`select * from ${entity} order by code${lock?' for update':''}`);
- const q=String(ref).toLowerCase();const exact=rows.filter(r=>[r.code,r.name,r.id].some(v=>String(v||'').toLowerCase()===q));
+ const exact=rows.filter(r=>[r.code,r.name,r.id].some(v=>String(v||'').toLowerCase()===q));
  const matches=exact.length?exact:rows.filter(r=>r.id.toLowerCase().startsWith(q)||String(r.name||'').toLowerCase().includes(q));
  if(matches.length!==1)throw Error(matches.length?`Ambiguous ${entity}: ${matches.map(r=>r.code+' '+(r.name||'')).join('; ')}`:`No matching ${entity}: ${ref}`);
  return matches[0];

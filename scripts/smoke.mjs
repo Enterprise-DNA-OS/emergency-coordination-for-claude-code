@@ -32,6 +32,8 @@ try{
  await fail(['add-program','--code=test','--name=Duplicate','--owner=Test','--kind=exercise',actor],/unique|duplicate/);
  const site=await call('add-site','--code=TEST','--name=Test hub','--owner=Test','--jurisdiction=NZ',actor);
  ok((await call('readiness')).find(x=>x.code==='TEST').gaps.includes('plan reference missing'));
+ eq((await call('show','sites',site.id.slice(0,8))).record.code,'TEST');
+ await fail(['show','sites',''],/must not be blank/);
  await fail(['update-plan','TEST','--last-test=2099-01-01',actor],/future/);
  await call('update-plan','TEST','--plan-ref=P','--evacuation-ref=E','--notification-ref=N','--medical-ref=M','--communication-ref=C','--training-ref=T','--test-ref=TEST-RECORD','--test-interval-days=90',`--last-test=${new Date().toISOString().slice(0,10)}`,`--review-due=${tomorrow}`,actor);
  eq((await call('readiness')).find(x=>x.code==='TEST').gaps,'');
@@ -78,6 +80,8 @@ try{
  const before=await count('requests');
  const bad=write('bad.csv',fs.readFileSync(example,'utf8').replace('2027-01-16','2027-02-30'));
  await fail(['import','salesforce',bad,'--source=fixture',actor],/valid/);eq(await count('requests'),before);
+ const blank=write('blank-program.csv',fs.readFileSync(example,'utf8').replace('EX-01,HUB',',HUB'));
+ await fail(['import','salesforce',blank,'--source=fixture',actor],/must not be blank/);eq(await count('requests'),before);
  const missing=write('missing.csv',fs.readFileSync(example,'utf8').replace('Needed By','Missing Date'));
  await fail(['import','salesforce',missing,'--source=fixture',actor],/Missing report column/);
  const duplicate=write('duplicate.csv',fs.readFileSync(example,'utf8').replace('a0A000000000002AAA','a0A000000000001AAA'));
