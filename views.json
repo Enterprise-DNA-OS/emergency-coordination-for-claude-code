@@ -1,13 +1,38 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Emergency Coordination for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Coordination week",
+    "subtitle": "Recorded requests, resources and follow-up. Confirm real conditions with the responsible people.",
     "sections": [
       {
+        "title": "Request queue",
+        "sql": "select code,name,program,quantity,unit,status,reserved,received,unallocated,due from request_queue order by due,code"
+      },
+      {
         "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "sql": "select * from attention order by due nulls first,code"
+      }
+    ]
+  },
+  {
+    "name": "stock",
+    "title": "Resource availability",
+    "sections": [
+      {
+        "title": "Stock and commitments",
+        "note": "Received stock remains consumed. These records do not dispatch supplies.",
+        "sql": "select code,item,unit,quantity,reserved,received,available,inspection_due,state from resource_balance order by code"
+      }
+    ]
+  },
+  {
+    "name": "readiness",
+    "title": "Plan evidence review",
+    "sections": [
+      {
+        "title": "Evidence and dates",
+        "note": "Record checks are not legal certification. Testing intervals are chosen in the plan.",
+        "sql": "select code,name,owner,jurisdiction,review_due,next_test,gaps from readiness order by code"
       }
     ]
   }

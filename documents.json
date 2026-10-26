@@ -1,11 +1,55 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "situation-record",
+    "title": "Draft situation record",
+    "for_each": "select id,code from programs order by code",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Programme",
+        "layout": "record",
+        "sql": "select code,name,owner,kind,status from programs where id=$1"
+      },
+      {
+        "title": "Requests",
+        "note": "Planning and coordination records only. No dispatch performed.",
+        "sql": "select code,name,item,unit,quantity,status,owner,due from requests where program_id=$1 order by due,code"
+      },
+      {
+        "title": "Exercise follow-up",
+        "sql": "select code,name,owner,due,status,evidence from actions where program_id=$1 order by due,code"
+      }
+    ]
+  },
+  {
+    "name": "receipt-record",
+    "title": "Resource receipt record",
+    "for_each": "select id,code from allocations where status='received' order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Receipt",
+        "layout": "record",
+        "sql": "select a.code,q.code as request,r.code as resource,a.quantity,r.unit,a.receipt_ref,a.received_by,a.received_at from allocations a join requests q on q.id=a.request_id join resources r on r.id=a.resource_id where a.id=$1"
+      }
+    ]
+  },
+  {
+    "name": "plan-review",
+    "title": "Emergency plan evidence checklist",
+    "for_each": "select id,code from sites order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Recorded references",
+        "layout": "record",
+        "sql": "select code,name,jurisdiction,owner,plan_ref,evacuation_ref,notification_ref,medical_ref,communication_ref,training_ref,test_ref,last_test,test_interval_days,review_due from sites where id=$1"
+      },
+      {
+        "title": "Gaps for review",
+        "note": "NZ regulation 14 / Australian model regulation 43 evidence prompts. A qualified reviewer checks the plan and local duties.",
+        "sql": "select gaps,next_test from readiness where id=$1"
+      }
     ]
   }
 ]
