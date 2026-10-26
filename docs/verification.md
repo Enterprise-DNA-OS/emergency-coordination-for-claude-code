@@ -10,4 +10,4 @@ The actual landing template rendered in a local isolated preview at desktop and 
 
 [GitHub verification run](https://github.com/Enterprise-DNA-OS/emergency-coordination-for-claude-code/actions/runs/40416465170) was blocked before any job steps ran. GitHub reported failed account payments or a spending-limit restriction. Windows Node 20/22 and hosted Postgres 17 verification therefore remain unexecuted. The workflow is present for those checks when the account restriction is resolved. Local Postgres 18.4 success is not a Windows result.
 
-The repository was pushed privately. The page content was pushed with live=false and status=drafted. Hosting deployment is separate from the Git push and is checked by the lane runner.
+The repository was pushed privately. The page content was pushed with live=false and status=drafted. The deployed page returned HTTP 200 with noindex,nofollow. Its final mobile heading, all three working demo tabs, all three service paths and six tracked booking links were verified in a headless browser. Desktop and mobile screenshots were inspected.
